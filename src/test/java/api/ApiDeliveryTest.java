@@ -1,10 +1,15 @@
 package api;
 
+import Dto.TestOrderDetail;
+import com.google.gson.Gson;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import utils.TestDataGenerator;
+import utils.TestFakerGenerator;
 
 public class ApiDeliveryTest {
 
@@ -179,6 +184,99 @@ public class ApiDeliveryTest {
                 .assertThat()
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
+//Class 11
+//Create Order with Dto Pattern
+    @Test
+    public void createOrderWithDtoPattern() {
+        //Order creation
+        TestOrderDetail OrderDtoRequest=new TestOrderDetail("Pooja","585647","Ring Me");
+        //SERIALIZATION JAVA TO JSON
+        String requestBodyJson = new Gson().toJson(OrderDtoRequest);
+        RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .body(requestBodyJson)
+                .log()
+                .all()
+                .post(BASE_URL + BASE_PATH)
+                .then()
+                .log()
+                .all()
+                .assertThat()
+                .statusCode(HttpStatus.SC_OK);
+    }
+
+    @Test
+    public void createOrderWithDtoPatternAndSetters() {
+        //Order creation by default constructor
+        TestOrderDetail OrderDtoRequest=new TestOrderDetail();
+        OrderDtoRequest.setComment("Ring me two times");
+        OrderDtoRequest.setCustomerName("Name");
+        OrderDtoRequest.setCustomerPhone("58475678");
+        //SERIALIZATION JAVA TO JSON
+        String requestBodyJson = new Gson().toJson(OrderDtoRequest);
+        RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .body(requestBodyJson)
+                .log()
+                .all()
+                .post(BASE_URL + BASE_PATH)
+                .then()
+                .log()
+                .all()
+                .assertThat()
+                .statusCode(HttpStatus.SC_OK);
+    }
+    @Test
+    public void createOrderWithDtoPatternAndSettersAndRandomValues() {
+        //Order creation by default constructor
+        TestOrderDetail OrderDtoRequest=new TestOrderDetail();
+        OrderDtoRequest.setComment(TestDataGenerator.GenerateRandomCustomerComment());
+        OrderDtoRequest.setCustomerName(TestDataGenerator.GenerateRandomCustomerName());
+        OrderDtoRequest.setCustomerPhone(TestDataGenerator.GenerateRandomCustomerPhone());
+
+        //SERIALIZATION JAVA TO JSON
+        String requestBodyJson = new Gson().toJson(OrderDtoRequest);
+        RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .body(requestBodyJson)
+                .log()
+                .all()
+                .post(BASE_URL + BASE_PATH)
+                .then()
+                .log()
+                .all()
+                .assertThat()
+                .statusCode(HttpStatus.SC_OK);
+    }
+
+    //Homework 11
+    // Homework_11
+    @Test
+    public void createOrderWithDtoPatternHalfRandomValueAndHalfFakerValues() {
+        //Order creation by default constructor
+        TestOrderDetail OrderDtoRequest=new TestOrderDetail();
+        OrderDtoRequest.setComment(TestDataGenerator.GenerateRandomCustomerComment());
+        OrderDtoRequest.setCustomerPhone(TestFakerGenerator.fakerCustomerPhone());
+        OrderDtoRequest.setCustomerName(TestFakerGenerator.fakerCustomerName());
+
+        String requestBodyJson = new Gson().toJson(OrderDtoRequest);
+        RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .body(requestBodyJson)
+                .log()
+                .all()
+                .post(BASE_URL + BASE_PATH)
+                .then()
+                .log()
+                .all()
+                .assertThat()
+                .statusCode(HttpStatus.SC_OK);
+    }
+
 }
 
 
