@@ -1,6 +1,7 @@
 package api;
 
 import Dto.TestOrderDetail;
+import Specs.RequestSpecOrder;
 import com.google.gson.Gson;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -276,6 +277,36 @@ public class ApiDeliveryTest {
                 .assertThat()
                 .statusCode(HttpStatus.SC_OK);
     }
+
+
+    //Class 12
+    //Using Specs Method
+
+    @Test
+    public void createOrderWithSpecs() {
+
+        TestOrderDetail OrderDtoRequest=new TestOrderDetail();
+        //Static method
+        OrderDtoRequest.setComment(TestDataGenerator.GenerateRandomCustomerComment());
+        OrderDtoRequest.setCustomerName(TestDataGenerator.GenerateRandomCustomerName());
+        OrderDtoRequest.setCustomerPhone(TestDataGenerator.GenerateRandomCustomerPhone());
+
+        //SERIALIZATION JAVA TO JSON
+        String requestBodyJson = new Gson().toJson(OrderDtoRequest);
+        RestAssured
+                .given()
+                .spec(RequestSpecOrder.getSpec())
+                .body(requestBodyJson)
+                .log()
+                .all()
+                .post(BASE_URL + BASE_PATH)
+                .then()
+                .log()
+                .all()
+                .assertThat()
+                .statusCode(HttpStatus.SC_OK);
+    }
+
 
 }
 
